@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
-import { Grid, Image, Card, Button, Icon, Label } from 'semantic-ui-react'
+import { Grid, Image, Card, Button, Icon, Label, CardContent } from 'semantic-ui-react'
 import moment from 'moment'
 
 import LikeButton from '../component/LikeButton'
@@ -28,7 +28,7 @@ function SinglePost(props) {
     if (!data) {
         postMarkup = <p>Loading...</p>
     } else {
-        const { id, body, createdAt, username, likes, likeCount, commentCount } = data.getPost
+        const { id, body, createdAt, username, likes, likeCount, comments, commentCount } = data.getPost
 
         postMarkup = (
             <Grid>
@@ -65,6 +65,20 @@ function SinglePost(props) {
                                 )}
                             </Card.Content>
                         </Card>
+                        {
+                            comments.map(comment => (
+                                <Card fluid key={comment.id}>
+                                    <CardContent>
+                                        {user && user.username === comment.username && (
+                                            <DeleteButton postId={id} commentId={comment.id} />
+                                        )}
+                                        <Card.Header>{comment.username}</Card.Header>
+                                        <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
+                                        <Card.Description>{comment.body}</Card.Description>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        }
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
